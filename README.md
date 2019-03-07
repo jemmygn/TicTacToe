@@ -6,7 +6,7 @@ For JAR file, locate out/artifacts.
 
 For JAVA file, locate src/sample/Main.java
 
-I gained the knowledge to build this game from here:
+References:
 
 -	https://stackoverflow.com/questions/34256503/tic-tac-toe-winning-condition-change-when-scalable-board-is-larger-than-4x4
 
