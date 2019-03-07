@@ -22,7 +22,6 @@ public class Main extends Application {
     private Label statusMessage = new Label("X must play!");
     private int rowColumn;
     private Cell[][] cell;
-    private int winStreak = 0 ;
     @Override
     public void start(Stage primaryStage) throws Exception{
         //Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
@@ -85,33 +84,37 @@ public class Main extends Application {
         //Horizontal Check
         for(int i = 0; i < rowColumn; i++)
         {
-            for(int j=0; j < rowColumn; j++)
-            {
-                if (cell[j][i].getPlayer() == player) {
-                    winStreak++;
-                    if(winStreak == rowColumn)
-                    {
-                        return true;
+            if (cell[i][0].getPlayer() == player) {
+                int j;
+
+                for (j = 1; j < rowColumn; j++) {
+                    if (cell[j][i].getPlayer()!=player) {
+                        break;
                     }
                 }
+
+                if (j == rowColumn) {
+                    return true;
+                }
             }
-            winStreak = 0;
         }
 
         //Vertical Check
         for(int i = 0; i < rowColumn; i++)
         {
-            for(int j=0; j < rowColumn; j++)
-            {
-                if (cell[i][j].getPlayer() == player) {
-                    winStreak++;
-                    if(winStreak == rowColumn)
-                    {
-                        return true;
+            if (cell[0][i].getPlayer() == player) {
+                int j;
+
+                for (j = 1; j < rowColumn; j++) {
+                    if (cell[i][j].getPlayer()!=player) {
+                        break;
                     }
                 }
+
+                if (j == rowColumn) {
+                    return true;
+                }
             }
-            winStreak = 0;
         }
 
 
