@@ -1,11 +1,12 @@
 package sample;
 
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanBinding;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -23,7 +24,10 @@ public class Main extends Application {
     private int rowColumn;
     private Cell[][] cell;
     private int winStreak = 0 ;
+    private Stage stage = new Stage();
     @Override
+
+
     public void start(Stage primaryStage) throws Exception{
         //Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
 
@@ -31,11 +35,18 @@ public class Main extends Application {
         GridPane gPane = new GridPane();
 
         TextInputDialog dialog = new TextInputDialog("3");
-        dialog.setTitle("Rows and Column To Play - TicTacToe");
+        dialog.setTitle("TicTacToe");
         dialog.setHeaderText("Welcome to TicTacToe");
         dialog.setContentText("Please enter how many rows and columns to play: ");
 
+
+        Button okButton = (Button) dialog.getDialogPane().lookupButton(ButtonType.OK);
+        TextField inputField = dialog.getEditor();
+        BooleanBinding isInvalid = Bindings.createBooleanBinding(() -> isInvalid(inputField.getText()), inputField.textProperty());
+        okButton.disableProperty().bind(isInvalid);
+
         Optional<String> result = dialog.showAndWait();
+
         result.ifPresent(rowColumns -> rowColumn = Integer.parseInt(rowColumns));
 
         cell =  new Cell[rowColumn][rowColumn];
@@ -60,8 +71,27 @@ public class Main extends Application {
         primaryStage.setTitle("TicTacToe");
         primaryStage.setScene(scene);
         primaryStage.show();
+        stage = primaryStage;
 
 
+    }
+
+    public boolean isInvalid(String input)
+    {
+        try{
+            double d = Double.parseDouble(input);
+
+            if(d == 0 || d == 1)
+            {
+                return true;
+            }
+        }
+        catch(NumberFormatException | NullPointerException nfe)
+        {
+            return true;
+        }
+
+        return false;
     }
 
     public boolean isBoardFull()
@@ -172,6 +202,34 @@ public class Main extends Application {
                         {
                             cell[i][j].setOnMouseClicked(null);
                         }
+                    }
+
+                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                    alert.setTitle("TicTacToe");
+                    alert.setHeaderText(Character.toUpperCase(currentPlayer) + " won!");
+                    alert.setContentText("Do you want to play again?");
+
+
+                    ButtonType buttonTypeOne = new ButtonType("Yes");
+                    ButtonType buttonTypeTwo = new ButtonType("No");
+
+                    alert.getButtonTypes().setAll(buttonTypeOne, buttonTypeTwo);
+
+                    Optional<ButtonType> result = alert.showAndWait();
+                    if (result.get() == buttonTypeOne)
+                    {
+                        Platform.runLater( () -> {
+                            try {
+                                stage.close();
+                                new Main().start( new Stage() );
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        });
+                    }
+                    else if (result.get() == buttonTypeTwo)
+                    {
+                        System.exit(0);
                     }
                 }
                 else if(isBoardFull())
